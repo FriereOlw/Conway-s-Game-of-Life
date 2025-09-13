@@ -1,0 +1,165 @@
+#include <iostream>
+#include <array>
+#include <chrono>
+#include <thread>
+#include <random>
+
+using namespace std;
+
+int countIteration{0};
+int countPopulation{0};
+
+
+template <typename T, size_t N, size_t M>
+ostream& operator<< (ostream& os, array<array<T, M>,N>& matrix){
+    for (size_t i = 0; i < N; ++i){
+        os << '{';
+        for (size_t j = 0; j < M; ++j){
+            os << matrix[i][j];
+
+            if(j+1 == M)
+                os << '}';
+            else 
+                os << ", ";
+        }
+        os << '\n';
+    }
+
+    return os;
+}
+
+template <typename T, size_t N, size_t M>
+void initRandomMatrix2D(array<array<T, M>,N>& matrix, int maks){
+    mt19937 rng(random_device{}());
+    uniform_int_distribution<int> dist(0,maks);
+
+    for(size_t i = 0; i < N; ++i){
+        for(size_t j = 0; j < M; ++j){
+            matrix[i][j] = dist(rng);
+        }
+    }
+}
+
+
+template <size_t N, size_t M>
+void printGame(const array<array<bool, M>, N>& matrix) {
+    // Top border
+    cout << '+';
+    for (size_t j = 0; j < M; ++j)
+        cout << '-';
+    cout << "+\n";
+
+    // Each row with side borders
+    for (size_t i = 0; i < N; ++i) {
+        cout << '|';
+        for (size_t j = 0; j < M; ++j) {
+            if(matrix[i][j]){
+                cout << '*';
+                countPopulation++;
+            }else
+                cout << ' ';
+        }
+        cout << "|\n";
+    }
+
+    // Bottom border
+    cout << '+';
+    for (size_t j = 0; j < M; ++j)
+        cout << '-';
+    cout << "+\n";
+}
+
+template <size_t N, size_t M>
+void countNeighbour(const array<array<bool, M>,N>& matrixInput, array<array<int, M>,N>& matrixOutput){
+    for(int i = 0; i < N; ++i){
+        for(int j = 0; j < M; ++j){
+            int count{0};
+            for(int di = -1; di <= 1; ++di){
+                for(int dj = -1; dj <= 1; ++dj){
+                    int ni = di + i;
+                    int nj = dj + j;
+
+                    // Center position not counted
+                    if(di == 0 && dj == 0)
+                        continue;  
+
+                    // Check if index is out ouf bond. e.g if it's corner
+                    if((ni >= 0 && ni < N) && (nj >= 0) && nj < M)
+                        count += matrixInput[ni][nj];
+                }
+            }
+            
+            matrixOutput[i][j] = count;
+        }
+    }
+}
+
+template <size_t N, size_t M>
+void playGame(array<array<bool, M>, N>& matrix2D){
+    array<array<int, M>,N> matrix2DInt{};
+    array<array<bool, M>,N> matrix2DPrev{matrix2D};
+
+    countNeighbour(matrix2D, matrix2DInt);
+
+    for(size_t i = 0; i < N; ++i){
+        for(size_t j = 0; j < M; ++j){
+            if(matrix2DPrev[i][j] == false && matrix2DInt[i][j] == 3)
+                matrix2D[i][j] = true;
+
+            else if(matrix2DPrev[i][j] == true){
+                if(matrix2DInt[i][j] < 2 || matrix2DInt[i][j] > 3)
+                    matrix2D[i][j] = false;
+            }
+
+
+            
+        }
+    }
+
+}
+
+template <size_t N, size_t M>
+bool isExtinct(const array<array<bool, M>, N>& matrix){
+    bool allDead{true};
+
+    for (size_t i = 0; i < N; ++i){
+        for (size_t j = 0; j < M; ++j){
+            if (matrix[i][j] == true)
+                allDead = false;
+        }
+    }
+
+    if(allDead){
+        cout << "Game has ended after " << countIteration++ << " iteration.\n";
+        return true;
+    }else{
+        cout << "Current iteration: " << countIteration++ << '\n';
+        cout << "Current population: " << countPopulation << '\n';
+        countPopulation=0;
+        return false;
+    }
+}
+
+
+// Conway's game of life, by John Horton Conway
+// 
+// DISCLAIMER:  
+// Only work for square matrices(NxN array)
+int main(){
+    array<array<bool,10>,30> matrix2D{};
+
+    initRandomMatrix2D(matrix2D,1);
+
+    while(true){
+        system("clear");
+        printGame(matrix2D);
+
+        if(isExtinct(matrix2D)) 
+            break;
+
+        playGame(matrix2D);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50)); // sleeps for 500 ms
+    }
+    cout << endl;
+}
