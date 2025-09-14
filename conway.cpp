@@ -8,7 +8,7 @@ using namespace std;
 
 int iterationCount{0};
 int populationCount{0};
-int delayEachFrame = 10;
+int delayEachFrame = 1;
 
 
 template <typename T, size_t N, size_t M>
@@ -145,13 +145,13 @@ bool isExtinct(const array<array<bool, M>, N>& matrix){
 // DISCLAIMER:  
 // Only work for square matrices(NxN array)
 int main(){     
-    // Ideally 35x160
     array<array<bool,160>,35> matrix2D{};
 
     initRandomMatrix2D(matrix2D);
 
     while(!isExtinct(matrix2D)){
-        system("clear");
+        cout << "\033[H\033[J";
+        //system("clear");
 
         playGame(matrix2D);
         printGame(matrix2D);
