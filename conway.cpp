@@ -84,16 +84,14 @@ void countNeighbour(const array<array<bool, M>,N>& matrixInput, array<array<int,
             int count{0};
             for(int di = -1; di <= 1; ++di){
                 for(int dj = -1; dj <= 1; ++dj){
-                    int ni = di + i;
-                    int nj = dj + j;
-
                     // Center position not counted
                     if(di == 0 && dj == 0)
                         continue;  
+                        
+                    int ni = (di + i + N) % N;
+                    int nj = (dj + j + M) % M;
 
-                    // Check if index is out ouf bound
-                    if((ni >= 0 && ni < N) && (nj >= 0 && nj < M))
-                        count += matrixInput[ni][nj];
+                    count += matrixInput[ni][nj];
                 }
             }
             
@@ -147,7 +145,8 @@ bool isExtinct(const array<array<bool, M>, N>& matrix){
 // DISCLAIMER:  
 // Only work for square matrices(NxN array)
 int main(){     
-    array<array<bool,10>,10> matrix2D{};
+    // Ideally 35x160
+    array<array<bool,160>,35> matrix2D{};
 
     initRandomMatrix2D(matrix2D);
 
