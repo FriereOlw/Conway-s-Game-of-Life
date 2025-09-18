@@ -8,7 +8,7 @@ using namespace std;
 
 int iterationCount{0};
 int populationCount{0};
-int delayEachFrame = 1;
+int delayEachFrame = 100;
 
 
 template <typename T, size_t N, size_t M>
@@ -31,6 +31,9 @@ ostream& operator<< (ostream& os, array<array<T, M>,N>& matrix){
 
 template <size_t N, size_t M>
 void printGame(const array<array<bool, M>, N>& matrix) {
+    // Move cursor to top-left
+    cout << "\033[H";
+
     // Top border
     cout << '+';
     for (size_t j = 0; j < M; ++j)
@@ -145,14 +148,11 @@ bool isExtinct(const array<array<bool, M>, N>& matrix){
 // DISCLAIMER:  
 // Only work for square matrices(NxN array)
 int main(){     
-    array<array<bool,160>,35> matrix2D{};
+    array<array<bool,160>,36> matrix2D{};
 
     initRandomMatrix2D(matrix2D);
 
     while(!isExtinct(matrix2D)){
-        cout << "\033[H\033[J";
-        //system("clear");
-
         playGame(matrix2D);
         printGame(matrix2D);
 
