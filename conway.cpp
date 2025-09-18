@@ -2,6 +2,7 @@
 #include <array>
 #include <chrono>
 #include <thread>
+#include <string>
 #include <random>
 
 using namespace std;
@@ -10,6 +11,8 @@ int iterationCount{0};
 int populationCount{0};
 int delayEachFrame = 100;
 
+std::string alive = "█";  // 
+std::string blank = " ";  //
 
 template <typename T, size_t N, size_t M>
 ostream& operator<< (ostream& os, array<array<T, M>,N>& matrix){
@@ -45,9 +48,9 @@ void printGame(const array<array<bool, M>, N>& matrix) {
         cout << '|';
         for (size_t j = 0; j < M; ++j) {
             if(matrix[i][j])
-                cout << '*';
+                cout << alive;
             else
-                cout << ' ';
+                cout << blank;
         }
         cout << "|\n";
     }
@@ -144,9 +147,6 @@ bool isExtinct(const array<array<bool, M>, N>& matrix){
 
 
 // Conway's game of life, by John Horton Conway
-// 
-// DISCLAIMER:  
-// Only work for square matrices(NxN array)
 int main(){     
     array<array<bool,160>,36> matrix2D{};
 
