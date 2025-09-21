@@ -12,8 +12,8 @@ constexpr int ROW = 160;
 constexpr int COL = 36;
 constexpr int delayEachFrame = 100;
 
-constexpr std::string alive = "█";
-constexpr std::string blank = " ";
+std::string_view alive = "█";
+std::string_view blank = " ";
 
 int iterationCount{0};
 int populationCount{0};
@@ -72,7 +72,7 @@ void printGame(const array<array<bool, M>, N>& matrix) {
    for (size_t j = 0; j < M; ++j) cout << '-';
    cout << "+\n";
 
-   cout << "Current iteration: " << iterationCount << '\n';
+   cout << "Current generation: " << iterationCount << '\n';
    cout << "Current population: " << populationCount << '\n';
 }
 
